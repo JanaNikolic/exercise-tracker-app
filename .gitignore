@@ -1,0 +1,26 @@
+# Node / Angular Defaults
+**/node_modules/
+**/.angular/
+**/dist/
+.env
+
+# .NET Defaults
+**/bin/
+**/obj/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Visual Studio
+.vs/
+**/[Dd]ebug/
+**/[Rr]elease/

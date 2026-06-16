@@ -1,0 +1,6 @@
+@exercise_tracker_backend_HostAddress = http://localhost:5068
+
+GET {{exercise_tracker_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
