@@ -24,6 +24,10 @@ public class MappingProfile : Profile
         CreateMap<UserForCreationDto, UserCreationDomainModel>();
 
         CreateMap<UserCreationDomainModel, User>();
+        CreateMap<UserDomainModel, UserDetailsApiModel>();
+
+        CreateMap<LoginDto, LoginDomainModel>();
+        CreateMap<AuthDomainModel, LoginResponseDto>();
 
     }
 }

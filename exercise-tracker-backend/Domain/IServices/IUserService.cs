@@ -6,5 +6,6 @@ namespace Domain.IServices
     {
         Task<UserDomainModel> InsertAsync(UserCreationDomainModel user);
         Task<UserDomainModel> GetByIdAsync(long id);
+        Task<AuthDomainModel> LoginAsync(LoginDomainModel request);
     }
 }

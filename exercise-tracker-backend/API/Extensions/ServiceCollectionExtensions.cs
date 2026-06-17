@@ -12,6 +12,7 @@ namespace API.Extensions
         public static IServiceCollection AddProjectServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

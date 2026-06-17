@@ -1,5 +1,6 @@
 ﻿using API.APIModels;
 using API.DTOs;
+using API.Extensions;
 using AutoMapper;
 using Domain.DomainModels;
 using Domain.IServices;
@@ -31,12 +32,27 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetUserAsync(long id)
         {
+            if (User.GetUserId() != id)
+            {
+                return Forbid();
+            }
             var user = await _userService.GetByIdAsync(id);
             var userApiModel = _mapper.Map<UserDetailsApiModel>(user);
             return Ok(userApiModel);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
+        {
+            var body = _mapper.Map<LoginDomainModel>(request);
+            var token = await _userService.LoginAsync(body);
+
+            var response = _mapper.Map<LoginResponseDto>(token);
+            return Ok(response);
         }
     }
 }

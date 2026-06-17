@@ -10,11 +10,13 @@ namespace Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IAuthService authService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _authService = authService;
         }
 
         public async Task<UserDomainModel> GetByIdAsync(long id) => await _userRepository.GetByIdAsync(id);
@@ -32,6 +34,25 @@ namespace Application.Services
 
             var newUser = await _userRepository.InsertAsync(user);
             return newUser;
+        }
+
+        public async Task<AuthDomainModel> LoginAsync(LoginDomainModel request)
+        {
+            UserDomainModel user = await _userRepository.GetByEmailAsync(request.Email);
+
+            if (user == null)
+            {
+                throw new UnauthorizedAccessException("Invalid credentials");
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            {
+                throw new UnauthorizedAccessException("Invalid credentials");
+            }
+
+            var token = _authService.CreateToken(user);
+
+            return new AuthDomainModel { Token = token };
         }
     }
 }
