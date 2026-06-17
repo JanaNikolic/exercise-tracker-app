@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Infrastructure.DatabaseModels
 {
-    [Index(nameof(Name), nameof(Email), IsUnique = true)]
+    [Index(nameof(Email), IsUnique = true)]
     public class User
     {
         [Key]
