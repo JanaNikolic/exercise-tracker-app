@@ -35,6 +35,16 @@ builder.Services.AddRepositories();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CompositePolicy", builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +54,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCors("CompositePolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
