@@ -24,3 +24,6 @@
 .vs/
 **/[Dd]ebug/
 **/[Rr]elease/
+
+# SQLite database
+*.db
