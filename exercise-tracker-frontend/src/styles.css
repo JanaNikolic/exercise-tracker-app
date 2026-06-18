@@ -1,0 +1,9 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+
+
+.emerald-gradient-bg {
+  background: #ffff;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 1) 0%, rgba(16, 185, 129, 0.48) 91%);
+}
