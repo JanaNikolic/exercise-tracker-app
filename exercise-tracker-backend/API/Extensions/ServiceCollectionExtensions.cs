@@ -13,6 +13,7 @@ namespace API.Extensions
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IWorkoutService, WorkoutService>();
 
             return services;
         }
@@ -20,6 +21,7 @@ namespace API.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWorkoutRepository, WorkoutRepository>();
 
             return services;
         }
