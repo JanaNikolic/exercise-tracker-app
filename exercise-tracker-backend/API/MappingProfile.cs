@@ -35,5 +35,7 @@ public class MappingProfile : Profile
         CreateMap<WorkoutCreationDomainModel, Workout>();
 
         CreateMap<WorkoutDomainModel, WorkoutApiModel>();
+
+        CreateMap<WeeklySummaryDomainModel, WeeklySummaryApiModel>();
     }
 }

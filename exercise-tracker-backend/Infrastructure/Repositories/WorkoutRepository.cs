@@ -68,5 +68,58 @@ namespace Infrastructure.Repositories
                 throw new RetrievalException<Workout>(id);
             }
         }
+        public async Task<IEnumerable<WorkoutDomainModel>> GetWorkoutsInDateRangeAsync(long userId, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var entities = await base.FindAllWhereAsync(w => w.UserId == userId && 
+                                                            w.TrainingDateTime >= startDate && 
+                                                            w.TrainingDateTime <= endDate);
+
+                return _mapper.Map<IEnumerable<WorkoutDomainModel>>(entities);
+            }
+            catch (Exception ex)
+            {
+                throw new RetrievalException<Workout>();
+            }
+        }
+        public async Task<IEnumerable<WorkoutDomainModel>> GetPagedUserWorkoutsAsync(long userId, int page, int size)
+        {
+            try
+            {
+                var entities = await base.GetPagedListAsync(
+                    filter: w => w.UserId == userId,
+                    page: page,
+                    size: size,
+                    true,
+                    orderBy: query => query.OrderByDescending(w => w.TrainingDateTime)
+                );
+
+                return _mapper.Map<IEnumerable<WorkoutDomainModel>>(entities);
+            }
+            catch (Exception ex)
+            {
+                throw new RetrievalException<Workout>();
+            }
+        }
+        public async Task<bool> DeleteAsync(long id, long userId)
+        {
+            try
+            {
+                var entity = await FirstOrDefaultAsync(w => w.Id == id);
+
+                if (entity == null || entity.UserId != userId)
+                {
+                    return false;
+                }
+
+                await Remove(entity);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new DeletionException<Workout>(id);
+            }
+        }
     }
 }

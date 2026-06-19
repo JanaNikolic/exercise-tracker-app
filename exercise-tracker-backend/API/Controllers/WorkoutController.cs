@@ -49,4 +49,55 @@ public class WorkoutController : ControllerBase
         var workoutApiModel = _mapper.Map<WorkoutApiModel>(workout);
         return Ok(workoutApiModel);
     }
+    [HttpGet("monthly-summary")]
+    public async Task<IActionResult> GetMonthlySummary([FromQuery] int year, [FromQuery] int month)
+    {
+        if (month < 1 || month > 12 || year < 2000 || year > 2100)
+        {
+            return BadRequest(new { message = "Invalid month or year parameters specified." });
+        }
+
+        long? userId = User.GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var domainSummaries = await _workoutService.GetMonthlyWeeklySummaryAsync(userId.Value, year, month);
+
+        var apiResponse = _mapper.Map<IEnumerable<WeeklySummaryApiModel>>(domainSummaries);
+
+        return Ok(apiResponse);
+    }
+    [HttpGet]
+    public async Task<IActionResult> GetAllWorkoutsAsync([FromQuery] int page = 1, [FromQuery] int size = 10)
+    {
+        long? userId = User.GetUserId();
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Invalid user session." });
+        }
+
+        var domainWorkouts = await _workoutService.GetPagedUserWorkoutsAsync(userId.Value, page, size);
+
+        var apiWorkoutModels = _mapper.Map<IEnumerable<WorkoutApiModel>>(domainWorkouts);
+
+        var response = new PaginatedListApiModel<WorkoutApiModel>(apiWorkoutModels, page, size);
+
+        return Ok(response);
+    }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteByIdAsync(long id)
+    {
+        long? userId = User.GetUserId();
+        if (userId == null)
+        {
+            return Unauthorized(new { message = "Invalid user session." });
+        }
+        bool wasDeleted = await _workoutService.DeleteAsync(id, userId.Value);
+
+        if (!wasDeleted)
+        {
+            return NotFound(new { message = $"Workout record with ID {id} was not found." });
+        }
+
+        return NoContent();
+    }
 }

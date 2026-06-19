@@ -42,8 +42,31 @@ public class BaseRepository<T> where T : class
         await SaveChangesAsync();
     }
 
-    protected async Task<IEnumerable<T>> GetPagedListAsync(Expression<Func<T, bool>> filter,
-                                                    int page,
-                                                    int size) => await _table.AsNoTracking().Where(filter).Skip((page - 1) * size).Take(size).ToListAsync();
+    protected async Task<IEnumerable<T>> GetPagedListAsync(
+    Expression<Func<T, bool>> filter,
+    int page,
+    int size,
+    bool disableTracking = true,
+    Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
+    {
+        IQueryable<T> query = _table;
+
+        if (disableTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        query = query.Where(filter);
+
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
+        return await query
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToListAsync();
+    }
 
 }
