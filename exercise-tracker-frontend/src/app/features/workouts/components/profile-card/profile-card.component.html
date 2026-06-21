@@ -1,0 +1,38 @@
+@if (profile(); as profileData) {
+  <div
+    class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-in fade-in duration-200"
+  >
+    <div class="flex items-center justify-between text-center">
+      <div class="flex gap-4 items-center">
+        <div
+          class="w-18 h-18 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold text-2xl shadow-inner"
+        >
+          {{ profileData.name.substring(0, 2).toUpperCase() }}
+        </div>
+
+        <div class="flex flex-col justify-between items-start text-start">
+          <h2 class="text-xl font-bold text-slate-800">{{ profileData.name }}</h2>
+          <p class="text-sm text-slate-500">{{ profileData.email }}</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        (click)="onLogout()"
+        class="w-fit text-end rounded-md border border-transparent bg-emerald-100 px-2 py-2 text-xs font-medium hover:bg-emerald-200 focus:outline-none transition-colors cursor-pointer"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+} @else {
+  <div
+    class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 w-full h-[110px] flex items-center gap-4 animate-pulse"
+  >
+    <div class="w-18 h-18 bg-slate-100 rounded-full"></div>
+    <div class="flex-1 space-y-2">
+      <div class="h-4 bg-slate-100 rounded w-1/2"></div>
+      <div class="h-3 bg-slate-100 rounded w-3/4"></div>
+    </div>
+  </div>
+}
