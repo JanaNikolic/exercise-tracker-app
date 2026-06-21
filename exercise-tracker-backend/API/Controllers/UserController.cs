@@ -63,7 +63,8 @@ namespace API.Controllers
             if (userId == null) return Unauthorized();
 
             var profile = await _userService.GetByIdAsync(userId.Value);
-            return Ok(profile);
+            var userApiModel = _mapper.Map<UserDetailsApiModel>(profile);
+            return Ok(userApiModel);
         }
     }
 }
