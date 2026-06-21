@@ -27,40 +27,51 @@ namespace Application.Services
             return await _workoutRepository.InsertAsync(workout);
         }
         public async Task<IEnumerable<WeeklySummaryDomainModel>> GetMonthlyWeeklySummaryAsync(long userId, int year, int month)
+        {
+            var startDate = new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = startDate.AddMonths(1).AddTicks(-1);
+
+            var workouts = await _workoutRepository.GetWorkoutsInDateRangeAsync(userId, startDate, endDate);
+
+            if (!workouts.Any()) return Enumerable.Empty<WeeklySummaryDomainModel>();
+
+            var calendarWeeks = GetWeeksForMonth(year, month);
+            var weeklySummaries = new List<WeeklySummaryDomainModel>();
+
+            foreach (var week in calendarWeeks)
             {
-                var startDate = new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc);
-                var endDate = startDate.AddMonths(1).AddTicks(-1);
+                var weekWorkouts = workouts.Where(w => w.TrainingDateTime >= week.Start && w.TrainingDateTime <= week.End).ToList();
 
-                var workouts = await _workoutRepository.GetWorkoutsInDateRangeAsync(userId, startDate, endDate);
-
-                if (!workouts.Any()) return Enumerable.Empty<WeeklySummaryDomainModel>();
-
-                var calendar = CultureInfo.CurrentCulture.Calendar;
-
-                var weeklySummaries = workouts
-                    .GroupBy(w => calendar.GetWeekOfYear(w.TrainingDateTime, CalendarWeekRule.FirstDay, DayOfWeek.Monday))
-                    .Select((group, index) =>
+                if (weekWorkouts.Any())
+                {
+                    weeklySummaries.Add(new WeeklySummaryDomainModel
                     {
-                        var orderedWorkouts = group.OrderBy(w => w.TrainingDateTime).ToList();
-
-                        return new WeeklySummaryDomainModel
-                        {
-                            WeekNumber = index + 1,
-                            WeekStart = orderedWorkouts.First().TrainingDateTime.Date,
-                            WeekEnd = orderedWorkouts.Last().TrainingDateTime.Date,
-
-                            TotalDurationInMinutes = group.Sum(w => w.DurationInMinutes),
-                            TotalNumberOfTrainings = group.Count(),
-
-                            AverageIntensity = Math.Round(group.Average(w => w.IntensityLevel), 1),
-                            AverageFatigue = Math.Round(group.Average(w => w.FatigueLevel), 1)
-                        };
-                    })
-                    .OrderBy(w => w.WeekNumber)
-                    .ToList();
-
-                return weeklySummaries;
+                        WeekNumber = week.WeekOfMonth,
+                        WeekStart = week.Start,
+                        WeekEnd = week.End,
+                        TotalDurationInMinutes = weekWorkouts.Sum(w => w.DurationInMinutes),
+                        TotalNumberOfTrainings = weekWorkouts.Count,
+                        AverageIntensity = Math.Round(weekWorkouts.Average(w => w.IntensityLevel), 1),
+                        AverageFatigue = Math.Round(weekWorkouts.Average(w => w.FatigueLevel), 1)
+                    });
+                }
+                else
+                {
+                    weeklySummaries.Add(new WeeklySummaryDomainModel
+                    {
+                        WeekNumber = week.WeekOfMonth,
+                        WeekStart = week.Start,
+                        WeekEnd = week.End,
+                        TotalDurationInMinutes = 0,
+                        TotalNumberOfTrainings = 0,
+                        AverageIntensity = 0,
+                        AverageFatigue = 0
+                    });
+                }
             }
+
+            return weeklySummaries.OrderBy(s => s.WeekNumber);
+        }
         public async Task<(IEnumerable<WorkoutDomainModel> Items, int TotalCount)> GetPagedUserWorkoutsAsync(long userId, int page, int size)
         {
             if (page < 1) page = 1;
@@ -72,5 +83,43 @@ namespace Application.Services
         {
             return await _workoutRepository.DeleteAsync(id, userId);
         }
+        private List<CalendarWeekStructure> GetWeeksForMonth(int year, int month)
+        {
+            var weeks = new List<CalendarWeekStructure>();
+            var firstOfMonth = new DateTime(year, month, 1);
+            var lastOfMonth = firstOfMonth.AddMonths(1).AddDays(-1);
+
+            DateTime current = firstOfMonth;
+            int weekCounter = 1;
+
+            while (current <= lastOfMonth)
+            {
+                int daysToMonday = ((int)current.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+                DateTime weekStart = current.AddDays(-daysToMonday);
+                
+                if (weekStart < firstOfMonth) weekStart = firstOfMonth;
+
+                DateTime weekEnd = weekStart.AddDays(6 - ((int)weekStart.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7);
+                
+                if (weekEnd > lastOfMonth) weekEnd = lastOfMonth;
+
+                weeks.Add(new CalendarWeekStructure
+                {
+                    WeekOfMonth = weekCounter++,
+                    Start = new DateTime(weekStart.Year, weekStart.Month, weekStart.Day, 0, 0, 0),
+                    End = new DateTime(weekEnd.Year, weekEnd.Month, weekEnd.Day, 23, 59, 59)
+                });
+
+                current = weekEnd.AddDays(1);
+            }
+
+            return weeks;
+        }
+    }
+    internal class CalendarWeekStructure
+    {
+        public int WeekOfMonth { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
     }
 }
