@@ -69,4 +69,5 @@ public class BaseRepository<T> where T : class
             .ToListAsync();
     }
 
+    protected async Task<int> CountAsync(Expression<Func<T, bool>> predicate) => await _table.CountAsync(predicate);
 }

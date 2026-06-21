@@ -72,7 +72,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                var entities = await base.FindAllWhereAsync(w => w.UserId == userId && 
+                var entities = await FindAllWhereAsync(w => w.UserId == userId && 
                                                             w.TrainingDateTime >= startDate && 
                                                             w.TrainingDateTime <= endDate);
 
@@ -83,11 +83,11 @@ namespace Infrastructure.Repositories
                 throw new RetrievalException<Workout>();
             }
         }
-        public async Task<IEnumerable<WorkoutDomainModel>> GetPagedUserWorkoutsAsync(long userId, int page, int size)
+        public async Task<(IEnumerable<WorkoutDomainModel> Items, int TotalCount)> GetPagedUserWorkoutsAsync(long userId, int page, int size)
         {
             try
             {
-                var entities = await base.GetPagedListAsync(
+                var entities = await GetPagedListAsync(
                     filter: w => w.UserId == userId,
                     page: page,
                     size: size,
@@ -95,7 +95,11 @@ namespace Infrastructure.Repositories
                     orderBy: query => query.OrderByDescending(w => w.TrainingDateTime)
                 );
 
-                return _mapper.Map<IEnumerable<WorkoutDomainModel>>(entities);
+                int totalCount = await CountAsync(w => w.UserId == userId);
+
+                var mappedItems = _mapper.Map<IEnumerable<WorkoutDomainModel>>(entities);
+
+                return (mappedItems, totalCount);
             }
             catch (Exception ex)
             {

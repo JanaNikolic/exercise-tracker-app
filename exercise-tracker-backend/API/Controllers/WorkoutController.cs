@@ -75,11 +75,11 @@ public class WorkoutController : ControllerBase
             return Unauthorized(new { message = "Invalid user session." });
         }
 
-        var domainWorkouts = await _workoutService.GetPagedUserWorkoutsAsync(userId.Value, page, size);
+        var (domainWorkouts, totalCount) = await _workoutService.GetPagedUserWorkoutsAsync(userId.Value, page, size);
 
         var apiWorkoutModels = _mapper.Map<IEnumerable<WorkoutApiModel>>(domainWorkouts);
 
-        var response = new PaginatedListApiModel<WorkoutApiModel>(apiWorkoutModels, page, size);
+        var response = new PaginatedListApiModel<WorkoutApiModel>(apiWorkoutModels, page, size, totalCount);
 
         return Ok(response);
     }

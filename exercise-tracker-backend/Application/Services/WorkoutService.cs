@@ -61,7 +61,7 @@ namespace Application.Services
 
                 return weeklySummaries;
             }
-        public async Task<IEnumerable<WorkoutDomainModel>> GetPagedUserWorkoutsAsync(long userId, int page, int size)
+        public async Task<(IEnumerable<WorkoutDomainModel> Items, int TotalCount)> GetPagedUserWorkoutsAsync(long userId, int page, int size)
         {
             if (page < 1) page = 1;
             if (size < 1 || size > 100) size = 10;
