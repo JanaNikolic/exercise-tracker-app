@@ -33,8 +33,6 @@ namespace Application.Services
 
             var workouts = await _workoutRepository.GetWorkoutsInDateRangeAsync(userId, startDate, endDate);
 
-            if (!workouts.Any()) return Enumerable.Empty<WeeklySummaryDomainModel>();
-
             var calendarWeeks = GetWeeksForMonth(year, month);
             var weeklySummaries = new List<WeeklySummaryDomainModel>();
 
@@ -96,11 +94,11 @@ namespace Application.Services
             {
                 int daysToMonday = ((int)current.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
                 DateTime weekStart = current.AddDays(-daysToMonday);
-                
+
                 if (weekStart < firstOfMonth) weekStart = firstOfMonth;
 
                 DateTime weekEnd = weekStart.AddDays(6 - ((int)weekStart.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7);
-                
+
                 if (weekEnd > lastOfMonth) weekEnd = lastOfMonth;
 
                 weeks.Add(new CalendarWeekStructure
