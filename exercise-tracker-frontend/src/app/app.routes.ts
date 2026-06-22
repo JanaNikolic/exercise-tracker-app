@@ -22,7 +22,7 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./features/workouts/dashboard-overview/dashboard-overview.component').then(
+          import('./features/workouts/pages/dashboard-overview/dashboard-overview.component').then(
             (m) => m.DashboardOverviewComponent,
           ),
       },

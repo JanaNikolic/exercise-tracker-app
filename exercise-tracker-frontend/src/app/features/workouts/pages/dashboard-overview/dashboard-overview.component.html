@@ -1,0 +1,40 @@
+<div class="min-h-screen bg-slate-50/50 flex">
+  <div
+    class="max-w-7xl mx-auto p-4 md:p-6 flex-1 grid grid-cols-2 lg:grid-cols-6 gap-6 items-start"
+  >
+    <aside class="lg:col-span-2 flex flex-col gap-4">
+      <app-profile-card
+        [profile]="userService.currentUser()!"
+        (logoutRequest)="onLogoutRequested()"
+      >
+      </app-profile-card>
+      <app-add-workout-form (workoutCreated)="onPageSelected(1)"></app-add-workout-form>
+    </aside>
+
+    <main class="lg:col-span-4 space-y-4 flex flex-col overflow-hidden">
+      @if (workouts$ | async; as apiResult) {
+        <app-workout-list
+          [workoutData]="apiResult"
+          (pageChanged)="onPageSelected($event)"
+          (deleteRequest)="onDeleteWorkout($event)"
+        ></app-workout-list>
+      }
+      <app-workout-summary
+        [summaries]="summaryData()"
+        (monthChanged)="onMonthSelected($event)"
+      ></app-workout-summary>
+    </main>
+  </div>
+  <app-toast-container></app-toast-container>
+
+  @if (activeDeleteTargetId() !== null) {
+    <app-confirmation-modal
+      title="Remove Workout Session"
+      message="This action cannot be undone. Are you sure you want to delete this workout session?"
+      confirmBtnText="Delete Session"
+      variant="rose"
+      (confirmed)="onConfirmDelete()"
+      (cancelled)="activeDeleteTargetId.set(null)"
+    ></app-confirmation-modal>
+  }
+</div>

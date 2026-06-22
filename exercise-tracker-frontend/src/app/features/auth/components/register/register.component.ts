@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../data-access/auth.service';
-import { RegisterData } from '../../auth.models';
+import { RegisterData } from '../../data-access/auth.models';
 
 export const passwordsMatchValidator: ValidatorFn = (
   control: AbstractControl,
