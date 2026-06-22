@@ -21,7 +21,9 @@
       <tbody class="divide-y divide-slate-100 text-sm text-slate-600">
         @for (workout of workoutData().items; track workout.id) {
           <tr class="hover:bg-slate-50/80 transition duration-150">
-            <td class="py-4 px-6 font-semibold text-slate-800">{{ workout.type }}</td>
+            <td class="py-4 px-6 font-semibold text-slate-800">
+              {{ formatExerciseName(workout.type) }}
+            </td>
             <td class="py-4 px-6 text-slate-500">
               {{ workout.trainingDateTime | date: 'mediumDate' }}
             </td>
@@ -69,14 +71,14 @@
       <button
         (click)="pageChanged.emit(workoutData().currentPage - 1)"
         [disabled]="workoutData().currentPage === 1"
-        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm  cursor-pointer"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm cursor-pointer"
       >
         Previous
       </button>
       <button
         (click)="pageChanged.emit(workoutData().currentPage + 1)"
         [disabled]="!workoutData().hasNextPage"
-        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm  cursor-pointer"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm cursor-pointer"
       >
         Next
       </button>

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { WorkoutService } from '../../data-access/workout.service';
 import { ExerciseType, WorkoutForCreation } from '../../data-access/workout.models';
 import { ToastService } from '../../../../core/services/toast.service';
+import { formatExerciseName } from '../../../../shared/utils/exercise-formatter.util';
 
 @Component({
   selector: 'app-add-workout-form',
@@ -18,7 +19,7 @@ export class AddWorkoutFormComponent {
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({
       value: key,
-      displayName: this.formatExerciseName(key),
+      displayName: formatExerciseName(key),
     }));
 
   workoutCreated = output<void>();
@@ -77,14 +78,5 @@ export class AddWorkoutFormComponent {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
     return now.toISOString().slice(0, 16);
-  }
-
-  private formatExerciseName(typeString: string): string {
-    switch (typeString) {
-      case 'StrengthTraining':
-        return 'Strength Training';
-      default:
-        return typeString.replace(/([A-Z])/g, ' $1').trim();
-    }
   }
 }
