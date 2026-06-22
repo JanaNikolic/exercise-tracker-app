@@ -1,0 +1,154 @@
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+  <h3 class="text-lg font-bold text-slate-800 mb-4">Log New Workout</h3>
+
+  <form (ngSubmit)="onSubmit()" #workoutForm="ngForm" class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label
+          for="exerciseType"
+          class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1"
+          >Exercise Type</label
+        >
+        <select
+          id="exerciseType"
+          [(ngModel)]="formModel.type"
+          name="type"
+          class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        >
+          @for (option of exerciseOptions; track option.value) {
+            <option [value]="option.value">
+              {{ option.displayName }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label
+          for="exerciseDateTime"
+          class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1"
+          >Date & Time</label
+        >
+        <input
+          id="exerciseDateTime"
+          [(ngModel)]="formModel.trainingDateTime"
+          name="trainingDateTime"
+          type="datetime-local"
+          required
+          class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label
+          for="exerciseDuration"
+          class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1"
+          >Duration (minutes)</label
+        >
+        <input
+          id="exerciseDuration"
+          [(ngModel)]="formModel.durationInMinutes"
+          name="durationInMinutes"
+          type="number"
+          min="1"
+          required
+          class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+
+      <div>
+        <label
+          for="exerciseCaloriesBurned"
+          class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1"
+          >Calories Burned</label
+        >
+        <input
+          id="exerciseCaloriesBurned"
+          [(ngModel)]="formModel.caloriesBurned"
+          name="caloriesBurned"
+          type="number"
+          min="0"
+          required
+          class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+    </div>
+
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100"
+    >
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label
+            for="exerciseIntensity"
+            class="text-xs font-semibold text-slate-500 uppercase tracking-wider"
+            >Intensity Level</label
+          >
+          <span class="text-xs font-bold text-amber-600">{{ formModel.intensityLevel }}/10</span>
+        </div>
+        <input
+          id="exerciseIntensity"
+          [(ngModel)]="formModel.intensityLevel"
+          name="intensityLevel"
+          type="range"
+          min="1"
+          max="10"
+          class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+        />
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label
+            for="exerciseFatigue"
+            class="text-xs font-semibold text-slate-500 uppercase tracking-wider"
+            >Fatigue Level</label
+          >
+          <span class="text-xs font-bold text-blue-600">{{ formModel.fatigueLevel }}/10</span>
+        </div>
+        <input
+          id="exerciseFatigue"
+          [(ngModel)]="formModel.fatigueLevel"
+          name="fatigueLevel"
+          type="range"
+          min="1"
+          max="10"
+          class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label
+        for="exerciseNotes"
+        class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1"
+        >Training Notes</label
+      >
+      <textarea
+        if="exerciseNotes"
+        [(ngModel)]="formModel.notes"
+        name="notes"
+        rows="2"
+        placeholder="How did the session feel? Any personal records?"
+        class="w-full text-sm bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 placeholder:text-slate-400 resize-none"
+      ></textarea>
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="!workoutForm.form.valid || isSubmitting()"
+      class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-sm flex justify-center items-center gap-2 cursor-pointer"
+    >
+      @if (isSubmitting()) {
+        <span
+          class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+        ></span>
+        Saving to logs...
+      } @else {
+        Save Workout Logs
+      }
+    </button>
+  </form>
+</div>

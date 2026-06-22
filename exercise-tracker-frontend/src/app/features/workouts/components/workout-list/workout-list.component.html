@@ -1,0 +1,85 @@
+<div class="flex flex-col bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+  <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+    <h3 class="text-lg font-bold text-slate-800">Workout Logs History</h3>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr
+          class="bg-slate-50 text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-100"
+        >
+          <th class="py-3 px-6">Type</th>
+          <th class="py-3 px-6">Date</th>
+          <th class="py-3 px-6">Duration</th>
+          <th class="py-3 px-6">Calories</th>
+          <th class="py-3 px-6">Intensity</th>
+          <th class="py-3 px-6">Fatigue</th>
+          <th class="py-3 px-6 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100 text-sm text-slate-600">
+        @for (workout of workoutData().items; track workout.id) {
+          <tr class="hover:bg-slate-50/80 transition duration-150">
+            <td class="py-4 px-6 font-semibold text-slate-800">{{ workout.type }}</td>
+            <td class="py-4 px-6 text-slate-500">
+              {{ workout.trainingDateTime | date: 'mediumDate' }}
+            </td>
+            <td class="py-4 px-6 font-medium">{{ workout.durationInMinutes }} mins</td>
+            <td class="py-4 px-6 text-slate-500">{{ workout.caloriesBurned }} kcal</td>
+            <td class="py-4 px-6">
+              <span class="inline-flex items-center gap-2">
+                <span
+                  class="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-md border border-amber-100"
+                  >{{ workout.intensityLevel }}</span
+                >
+              </span>
+            </td>
+            <td class="py-4 px-6">
+              <span
+                class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md border border-blue-100"
+                >{{ workout.fatigueLevel }}</span
+              >
+            </td>
+            <td class="py-4 px-6 text-center">
+              <button
+                (click)="deleteRequest.emit(workout.id)"
+                class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-2 rounded-lg transition duration-150 cursor-pointer"
+              >
+                <span class="material-symbols-outlined"> delete </span>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-400">
+              No workout tracking sessions logged yet.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-sm">
+    <span class="text-slate-500"
+      >Page <strong class="text-slate-700">{{ workoutData().currentPage }}</strong></span
+    >
+    <div class="inline-flex gap-2">
+      <button
+        (click)="pageChanged.emit(workoutData().currentPage - 1)"
+        [disabled]="workoutData().currentPage === 1"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm  cursor-pointer"
+      >
+        Previous
+      </button>
+      <button
+        (click)="pageChanged.emit(workoutData().currentPage + 1)"
+        [disabled]="!workoutData().hasNextPage"
+        class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none font-medium transition duration-150 shadow-sm  cursor-pointer"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

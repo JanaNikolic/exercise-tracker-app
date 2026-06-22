@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { LoginCredentials } from '../../auth.models';
+import { LoginCredentials } from '../../data-access/auth.models';
 import { AuthService } from '../../data-access/auth.service';
 
 @Component({
@@ -46,7 +46,7 @@ export class LoginComponent {
       error: (error) => {
         this.isLoading.set(false);
         this.errorMessage.set(
-          error.error?.message ||
+          error.error?.message || error.error ||
             'An unexpected error occurred during registration. Please try again.',
         );
       },
