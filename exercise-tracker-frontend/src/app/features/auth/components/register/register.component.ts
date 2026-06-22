@@ -85,6 +85,7 @@ export class RegisterComponent {
         this.isLoading.set(false);
         this.errorMessage.set(
           error.error?.message ||
+            error.error.error ||
             'An unexpected error occurred during registration. Please try again.',
         );
       },
