@@ -26,7 +26,7 @@ public class MappingProfile : Profile
         CreateMap<UserDomainModel, UserDetailsApiModel>();
 
         CreateMap<LoginDto, LoginDomainModel>();
-        CreateMap<AuthDomainModel, LoginResponseDto>();
+        CreateMap<AuthDomainModel, LoginApiModel>();
 
         CreateMap<Workout, WorkoutDomainModel>();
         CreateMap<WorkoutDomainModel, Workout>();

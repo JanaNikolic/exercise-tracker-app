@@ -1,6 +1,6 @@
-﻿namespace API.DTOs
+﻿namespace API.APIModels
 {
-    public class LoginResponseDto
+    public class LoginApiModel
     {
         public string Token { get; set; }
     }

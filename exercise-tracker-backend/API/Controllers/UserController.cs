@@ -51,7 +51,7 @@ namespace API.Controllers
             var body = _mapper.Map<LoginDomainModel>(request);
             var token = await _userService.LoginAsync(body);
 
-            var response = _mapper.Map<LoginResponseDto>(token);
+            var response = _mapper.Map<LoginApiModel>(token);
             return Ok(response);
         }
 
