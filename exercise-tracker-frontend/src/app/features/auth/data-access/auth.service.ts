@@ -1,10 +1,9 @@
-// src/app/features/auth/auth.service.ts
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
-import { RegisterData, AuthResponse, LoginCredentials } from '../auth.models';
+import { RegisterData, AuthResponse, LoginCredentials } from './auth.models';
 
 @Injectable({
   providedIn: 'root'
