@@ -22,7 +22,7 @@ public class BaseRepository<T> where T : class
 
     protected async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
-    protected async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => await _table.FirstOrDefaultAsync(predicate);
+    protected async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate) => await _table.AsNoTracking().FirstOrDefaultAsync(predicate);
 
     protected async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate) => await _table.AnyAsync(predicate);
 
@@ -34,7 +34,7 @@ public class BaseRepository<T> where T : class
 
     protected async Task<T?> FindAsync(long id) => await _table.FindAsync(id);
 
-    protected async Task<IEnumerable<T>> FindAllWhereAsync(Expression<Func<T, bool>> predicate) => await _table.Where(predicate).ToListAsync();
+    protected async Task<IEnumerable<T>> FindAllWhereAsync(Expression<Func<T, bool>> predicate) => await _table.AsNoTracking().Where(predicate).ToListAsync();
 
     protected async Task Remove(T entity)
     {
@@ -42,8 +42,32 @@ public class BaseRepository<T> where T : class
         await SaveChangesAsync();
     }
 
-    protected async Task<IEnumerable<T>> GetPagedListAsync(Expression<Func<T, bool>> filter,
-                                                    int page,
-                                                    int size) => await _table.Where(filter).Skip((page - 1) * size).Take(size).ToListAsync();
+    protected async Task<IEnumerable<T>> GetPagedListAsync(
+    Expression<Func<T, bool>> filter,
+    int page,
+    int size,
+    bool disableTracking = true,
+    Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null)
+    {
+        IQueryable<T> query = _table;
 
+        if (disableTracking)
+        {
+            query = query.AsNoTracking();
+        }
+
+        query = query.Where(filter);
+
+        if (orderBy != null)
+        {
+            query = orderBy(query);
+        }
+
+        return await query
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToListAsync();
+    }
+
+    protected async Task<int> CountAsync(Expression<Func<T, bool>> predicate) => await _table.CountAsync(predicate);
 }

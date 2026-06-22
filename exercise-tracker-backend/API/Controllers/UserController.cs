@@ -54,5 +54,17 @@ namespace API.Controllers
             var response = _mapper.Map<LoginResponseDto>(token);
             return Ok(response);
         }
+
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfileAsync()
+        {
+            long? userId = User.GetUserId(); 
+            if (userId == null) return Unauthorized();
+
+            var profile = await _userService.GetByIdAsync(userId.Value);
+            var userApiModel = _mapper.Map<UserDetailsApiModel>(profile);
+            return Ok(userApiModel);
+        }
     }
 }

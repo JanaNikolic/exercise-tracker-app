@@ -10,8 +10,8 @@ namespace Infrastructure.Repositories
     {
         private readonly IMapper _mapper;
 
-        public UserRepository(AppDbContext timeSheetDbContext, IMapper mapper)
-            : base(timeSheetDbContext)
+        public UserRepository(AppDbContext dbContext, IMapper mapper)
+            : base(dbContext)
         {
             _mapper = mapper;
         }
